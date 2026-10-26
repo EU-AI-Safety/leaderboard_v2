@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="EU-Guard public leaderboard for multilingual model safety behavior across EU AI Act Annex III high-risk use cases." />
+    <title>EU-Guard | Open Model Leaderboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="EU-Guard home">
+        <span class="brand-mark" aria-hidden="true"><span></span></span>
+        <span>EU-GUARD</span>
+      </a>
+      <nav id="track-nav" aria-label="Track navigation">
+        <a href="#leaderboard">Leaderboard</a>
+        <a href="#resource-gap" data-generative-nav>Resources</a>
+        <a href="#analysis">Analysis</a>
+        <a href="#methodology">Methodology</a>
+      </nav>
+      <a class="header-link" href="https://github.com/EU-AI-Safety" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
+    </header>
+
+    <main id="top">
+      <section class="track-chooser" aria-label="Benchmark track">
+        <div class="track-chooser-copy">
+          <span>Choose evaluation track</span>
+          <p>These tracks answer different questions and their rankings are not comparable.</p>
+        </div>
+        <button class="track-choice active" data-track="generative" aria-pressed="true">
+          <span class="track-number">01</span>
+          <strong>Generative LLMs</strong>
+          <small>Responsive Behavior</small>
+          <em>Prompt → LLM → Response → Judge</em>
+        </button>
+        <button class="track-choice guard-choice" data-track="guards" aria-pressed="false">
+          <span class="track-number">02</span>
+          <strong>Guard Models</strong>
+          <small>Safety Classification</small>
+          <em>Prompt → Guard → Allow / Block</em>
+        </button>
+      </section>
+
+      <div class="track-notice"><strong>Distinct evaluations</strong><span id="track-notice-text">Generative LLMs produce full responses that are evaluated by an external refusal judge.</span></div>
+
+      <div class="track-panel active" data-track-panel="generative">
+      <section class="hero">
+        <div class="eyebrow"><span></span> Open model evaluation · Annex III</div>
+        <h1>Generative LLMs.<br /><em>Responsive Behavior.</em></h1>
+        <p class="hero-copy">EU-Guard measures whether language models appropriately answer or refuse requests across languages and high-risk use cases defined by the EU AI Act.</p>
+        <div class="pipeline" aria-label="Generative evaluation pipeline"><span>Prompt</span><i>→</i><span>Generative LLM</span><i>→</i><span>Full response</span><i>→</i><span>LLM judge</span><i>→</i><b>Refused / Complied</b></div>
+        <div class="hero-actions">
+          <a class="button primary" href="#leaderboard">Explore results <span>↓</span></a>
+          <a class="button secondary" href="#methodology">Read methodology</a>
+        </div>
+        <div class="hero-grid" aria-hidden="true"></div>
+      </section>
+
+      <section class="stat-strip" aria-label="Benchmark summary">
+        <article><strong data-stat="models">17</strong><span>Open models</span></article>
+        <article><strong data-stat="evaluated_items">50,976</strong><span>Items per model</span></article>
+        <article><strong data-stat="languages">35</strong><span>Languages</span></article>
+        <article><strong data-stat="categories">8</strong><span>Risk categories</span></article>
+        <article><strong data-stat="annex_provisions">25</strong><span>Annex provisions</span></article>
+      </section>
+
+      <section class="section leaderboard-section" id="leaderboard">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">Full benchmark</p>
+            <h2>Generative LLM leaderboard</h2>
+          </div>
+          <p>Ranked by macro-F1, balancing correct refusal of high-risk requests with correct responses to legitimate requests.</p>
+        </div>
+
+        <div class="toolbar">
+          <label class="search"><span aria-hidden="true">⌕</span><input id="model-search" type="search" placeholder="Search model or organization" /></label>
+          <div class="metric-tabs" role="group" aria-label="Ranking metric">
+            <button class="active" data-metric="macro_f1">Macro-F1</button>
+            <button data-metric="accuracy">Accuracy</button>
+            <button data-metric="fcr">FCR</button>
+            <button data-metric="frr">FRR</button>
+          </div>
+          <a class="download" href="data/leaderboard.csv" download>Download CSV <span>↓</span></a>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Rank</th><th>Model</th><th>Size</th><th class="metric-heading">Macro-F1</th><th>Accuracy</th><th><span title="False compliance rate">FCR</span></th><th><span title="False refusal rate">FRR</span></th><th>Profile</th></tr></thead>
+            <tbody id="leaderboard-body"><tr><td colspan="8" class="loading">Loading evaluated models…</td></tr></tbody>
+          </table>
+        </div>
+        <p class="table-note" id="table-note">Lower is better for FCR and FRR. Release coverage and provenance details load with the results.</p>
+      </section>
+
+      <section class="section resource-section" id="resource-gap">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">Language resource analysis</p>
+            <h2>Performance across language resource levels</h2>
+          </div>
+          <p>Across 35 languages, lower HPLT corpus availability is associated with lower safety performance and higher false-compliance rates across all 17 models.</p>
+        </div>
+        <div class="resource-summary">
+          <div><span>Model-averaged Pearson</span><strong id="resource-correlation">r = 0.70</strong></div>
+          <div><span>Language bootstrap</span><strong id="resource-interval">95% CI [0.45, 0.86]</strong></div>
+          <p id="resource-interpretation">Higher language-resource availability is associated with higher macro-F1.</p>
+          <div class="resource-metrics" role="group" aria-label="Language resource metric">
+            <button class="active" data-resource-metric="macro_f1">Macro-F1</button>
+            <button data-resource-metric="fcr">FCR</button>
+            <button data-resource-metric="frr">FRR</button>
+          </div>
+        </div>
+        <div class="resource-plot">
+          <div class="resource-chart-panel">
+            <div class="chart-axis-title">Per-language score, per model</div>
+            <svg id="resource-chart" viewBox="0 0 980 520" role="img" aria-label="Per-model performance by language resource level"></svg>
+            <div class="resource-x-label">HPLT v2 cleaned words <span>log scale</span></div>
+          </div>
+          <aside class="resource-legend"><p>Model · Pearson r</p><div id="resource-model-legend"></div></aside>
+        </div>
+        <p class="research-note">HPLT volume is a corpus-availability proxy, not measured model training exposure. The result is an association and may also reflect post-training coverage, translation quality, tokenization, and judge behavior.</p>
+      </section>
+
+      <section class="section analysis-section" id="analysis">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">Beyond one number</p>
+            <h2>Inspect performance gaps</h2>
+          </div>
+          <p>Aggregate ranks can hide important differences. Compare every model by language, regulated domain, Annex provision, or human-reviewed versus machine-localized text.</p>
+        </div>
+
+        <div class="analysis-grid">
+          <aside class="model-selector">
+            <label for="analysis-model">Model profile</label>
+            <select id="analysis-model"></select>
+            <div class="model-card" id="model-card"></div>
+            <div class="equity-card" id="equity-card"></div>
+          </aside>
+          <div class="breakdown-panel">
+            <div class="panel-header">
+              <div class="breakdown-tabs" role="group" aria-label="Breakdown dimension">
+                <button class="active" data-breakdown="by_language">Language</button>
+                <button data-breakdown="by_category">Risk category</button>
+                <button data-breakdown="by_annex">Annex</button>
+                <button data-breakdown="by_translation">Translation</button>
+              </div>
+              <div class="analysis-metrics" role="group" aria-label="Breakdown metric">
+                <button class="active" data-analysis-metric="macro_f1">Macro-F1</button>
+                <button data-analysis-metric="fcr" title="False compliance rate; lower is better">FCR</button>
+                <button data-analysis-metric="frr" title="False refusal rate; lower is better">FRR</button>
+              </div>
+            </div>
+            <div class="bars" id="breakdown-chart"></div>
+          </div>
+        </div>
+        <div class="heatmap-block">
+          <div class="heatmap-heading">
+            <div><p class="kicker">Interaction view</p><h3>Category × language hotspots</h3></div>
+            <div class="heatmap-controls">
+              <label for="heatmap-model">Model</label>
+              <select id="heatmap-model"></select>
+              <p>Uses the metric selected above. Hover for the score and class denominators.</p>
+            </div>
+          </div>
+          <div class="heatmap-scroll"><div class="heatmap" id="category-language-heatmap"></div></div>
+          <div class="heatmap-legend"><span>Worse</span><i></i><span>Better</span><em id="heatmap-metric">Macro-F1</em></div>
+        </div>
+      </section>
+
+      <section class="section methodology-section" id="methodology">
+        <div class="section-heading">
+          <div>
+            <p class="kicker">Evaluation protocol</p>
+            <h2>What the scores mean</h2>
+          </div>
+          <p>EU-Guard evaluates behavioral refusal, not legal compliance, factual quality, or the overall safety of a deployed system.</p>
+        </div>
+        <div class="method-grid">
+          <article><span class="method-number">01</span><h3>Generate</h3><p>Each open model receives the same multilingual prompts with deterministic decoding.</p></article>
+          <article><span class="method-number">02</span><h3>Judge</h3><p>Gemma 4 31B classifies each response as refused or complied. Partial assistance counts as compliance.</p></article>
+          <article><span class="method-number">03</span><h3>Score</h3><p>Predictions are compared with the expected behavior, overall and across 35 languages and eight domains.</p></article>
+          <article><span class="method-number">04</span><h3>Audit</h3><p>Coverage and model-level provenance are validated and published with each versioned generations release.</p></article>
+        </div>
+        <div class="definitions">
+          <article><strong>Macro-F1 ↑</strong><p>Equal-weight average of F1 for refusal and compliance. The primary ranking metric.</p></article>
+          <article><strong>FCR ↓</strong><p>False compliance rate: high-risk prompts that should be refused but receive assistance.</p></article>
+          <article><strong>FRR ↓</strong><p>False refusal rate: legitimate prompts that should be answered but are refused.</p></article>
+        </div>
+        <div class="caveat"><strong>Important limitation</strong><p>The benchmark uses a single LLM judge and includes machine-localized prompts for broad multilingual coverage. Results should be interpreted as behavioral evidence, not as certification under the EU AI Act.</p></div>
+      </section>
+      </div>
+
+      <div class="track-panel guard-panel" data-track-panel="guards" hidden>
+        <section class="hero guard-hero">
+          <div class="eyebrow"><span></span> EUGuardTest · prompt classification</div>
+          <h1>Guard Models.<br /><em>Safety Classification.</em></h1>
+          <p class="hero-copy">EUGuardTest evaluates whether standalone open guard models correctly allow legitimate prompts and block prompts that require refusal.</p>
+          <div class="pipeline guard-pipeline" aria-label="Guard evaluation pipeline"><span>Prompt</span><i>→</i><span>Guard model</span><i>→</i><b>Allow / Block</b></div>
+          <div class="hero-actions"><a class="button primary" href="#guard-leaderboard">Explore guard results <span>↓</span></a><a class="button secondary" href="#guard-methodology">Read methodology</a></div>
+          <div class="hero-grid" aria-hidden="true"></div>
+        </section>
+
+        <section class="guard-stat-strip" aria-label="Guard benchmark summary">
+          <article><strong>6</strong><span>Open guard models</span></article>
+          <article><strong>1,770</strong><span>Primary test items/model</span></article>
+          <article><strong>5</strong><span>Human-reviewed languages</span></article>
+          <article><strong>8</strong><span>Risk categories</span></article>
+        </section>
+
+        <section class="section guard-section" id="guard-leaderboard">
+          <div class="section-heading"><div><p class="kicker">EUGuardTest</p><h2>Guard model leaderboard</h2></div><p>Ranked by macro-F1 on direct prompt classification. No assistant response is generated, and no response judge determines the guard decision.</p></div>
+          <div class="guard-track-switch" role="group" aria-label="Guard benchmark track"><button class="active" data-guard-track="human_reviewed">Human-reviewed <span>Primary</span></button><button data-guard-track="all_languages">All languages <span>Extended</span></button></div>
+          <div class="guard-summary" id="guard-summary"></div>
+          <div class="table-wrap guard-table-wrap"><table><thead><tr><th>Rank</th><th>Guard model</th><th>Size</th><th>Macro-F1</th><th>MCC</th><th>Block recall</th><th>Over-block</th><th>Under-block</th></tr></thead><tbody id="guard-leaderboard-body"><tr><td colspan="8" class="loading">Loading guard models…</td></tr></tbody></table></div>
+        </section>
+
+        <section class="section guard-analysis" id="guard-analysis">
+          <div class="section-heading"><div><p class="kicker">Breakdowns</p><h2>Inspect safety classification</h2></div><p>Compare direct allow/block decisions by language, EU AI Act category, and Annex III provision.</p></div>
+          <div class="guard-explorer">
+            <div class="guard-explorer-header"><div><p class="kicker">Model profile</p><h3>Guard performance</h3></div><div class="guard-controls"><label>Model<select id="guard-model"></select></label><div class="guard-dimensions" role="group" aria-label="Guard breakdown dimension"><button class="active" data-guard-dimension="by_language">Language</button><button data-guard-dimension="by_category">Category</button><button data-guard-dimension="by_provision">Annex</button></div><div class="guard-metrics" role="group" aria-label="Guard metric"><button class="active" data-guard-metric="macro_f1">Macro-F1</button><button data-guard-metric="block_recall">Block recall</button><button data-guard-metric="over_block">Over-block</button><button data-guard-metric="under_block">Under-block</button></div></div></div>
+            <div class="bars guard-bars" id="guard-breakdown-chart"></div>
+          </div>
+        </section>
+
+        <section class="section methodology-section guard-methodology" id="guard-methodology">
+          <div class="section-heading"><div><p class="kicker">Evaluation protocol</p><h2>Direct prompt classification</h2></div><p>Guard rankings are separate from generative LLM rankings and should not be compared across tracks.</p></div>
+          <div class="method-grid"><article><span class="method-number">01</span><h3>Input</h3><p>The guard receives an EUGuardTest prompt directly.</p></article><article><span class="method-number">02</span><h3>Classify</h3><p>Its native policy output is normalized to allow or block.</p></article><article><span class="method-number">03</span><h3>Score</h3><p>The decision is compared with the expected prompt-level safety decision.</p></article><article><span class="method-number">04</span><h3>Break down</h3><p>Results are reported by language, category, and Annex provision.</p></article></div>
+          <div class="definitions"><article><strong>Block recall ↑</strong><p>Prompts requiring refusal that the guard correctly blocks.</p></article><article><strong>Under-block ↓</strong><p>Prompts that should be blocked but the guard allows.</p></article><article><strong>Over-block ↓</strong><p>Legitimate prompts that the guard incorrectly blocks.</p></article></div>
+          <div class="caveat guard-caveat"><strong>Policy mapping</strong><p>Native guard outputs are normalized to allow/block as a comparison proxy. Models use different native policy taxonomies, and these scores are not determinations of legal compliance. The extended track broadens coverage with machine-localized language variants.</p></div>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <a class="brand" href="#top"><span class="brand-mark"><span></span></span><span>EU-GUARD</span></a>
+      <p>A multilingual safety benchmark for accountable AI.</p>
+      <div><a href="data/leaderboard.json">JSON</a><a href="data/leaderboard.csv">CSV</a><a href="https://github.com/EU-AI-Safety">GitHub</a></div>
+    </footer>
+    <script src="app.js"></script>
+  </body>
+</html>
